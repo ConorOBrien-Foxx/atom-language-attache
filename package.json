@@ -8,7 +8,7 @@
   "activationCommands": {
     "atom-workspace": "atom-language-attache:toggle"
   },
-  "repository": "https://github.com/atom/atom-language-attache",
+  "repository": "https://github.com/ConorOBrien-Foxx/atom-language-attache",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
