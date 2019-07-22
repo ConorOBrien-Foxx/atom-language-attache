@@ -178,7 +178,7 @@ repository:
                 end: "\\]"
             }
             {
-                begin: "([[:alpha:]][[[:alpha:]]\w]*)\\s*\\["
+                begin: "([[:alpha:]][[[:alpha:]]\\w]*)\\s*\\["
                 beginCaptures:
                     "1":
                         name: "support.function.attache"
