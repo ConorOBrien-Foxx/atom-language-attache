@@ -1,0 +1,40 @@
+??<<
+??? Point class.
+??? @genre numeric
+??? @return Point
+??? @type x number
+??? @type y number
+??? @example origin := Point[0, 0]
+??? @example Print[origin]
+??? @example ?? (0, 0)
+??? @example pythag := Point[3, 4]
+??? @example Print[pythag]
+??? @example ?? (3, 4)
+ClassNamed[Point] {
+    If[#__ = 1,
+        x ' y .= List@_1,
+        x .= _1 ;; y .= _2
+    ]
+
+    $bin_op[dir, name, fn, other] .= (
+        value .= If[other is_a Point,
+            List@other,
+            2 & other
+        ];;
+        Point@@fn@@Switch[dir,
+            $left -> [List@$, value],
+            $right -> [value, List@$],
+            nil
+        ]
+    )
+
+    $equal[other] .=
+        If[other is_a Point,
+            $.x = other.x and $.y = other.y,
+            false
+        ]
+
+    $list[] .= [$.x, $.y]
+    $string[] .= $"(${$.x}, ${$.y})"
+}
+??>>

@@ -1,0 +1,240 @@
+comment: """
+    Reference to the Oniguruma Regex libraray:
+      https://github.com/kkos/oniguruma/blob/master/doc/RE
+
+    TODO:
+    * Once 0.4 is released, simplify type matches (no explicit 'Union', parens, etc.)
+    * take out ::Type
+    * Add more regex stuff.
+    * Some in comments throughout the grammar
+
+"""
+fileTypes: [
+  "@"
+]
+name: "Attache"
+patterns: [
+      {
+          include: "#operator"
+      }
+      {
+          include: "#array"
+      }
+      {
+          include: "#string"
+      }
+      {
+          include: "#bracket"
+      }
+      {
+          include: "#function_decl"
+      }
+      {
+          include: "#function_call"
+      }
+      {
+          include: "#keyword"
+      }
+      {
+          include: "#number"
+      }
+      {
+          include: "#comment"
+      }
+      {
+          include: "#type_decl"
+      }
+      {
+          include: "#symbol"
+      }
+]
+repository:
+    comment:
+        patterns: [
+            {include: "#comment_block"}
+            {
+                begin: "(\\?{3})\\s*(@example)\\s*"
+                beginCaptures:
+                    "1":
+                        name: "comment.line.attache"
+                    "2":
+                        name: "string.quoted.other.attache"
+                end: "\\n|$"
+                patterns: [
+                    include: "$self"
+                ]
+            }
+            {
+                match: "(\\?{3})(.*?)(?:\\n|$)"
+                captures:
+                    "1":
+                        name: "comment.line.attache"
+                    "2":
+                        name: "string.quoted.triple.attache"
+            }
+            {
+                begin: "\\?{2}"
+                beginCaptures:
+                    "0":
+                        name: "punctuation.definition.comment.attache"
+                end: "\\n|$"
+                name: "comment.line.attache"
+            }
+        ]
+    comment_block:
+        patterns: [
+            {
+                begin: "\\(\\*"
+                beginCaptures:
+                    "0":
+                        name: "punctuation.definition.comment.begin.attache"
+                end: "\\*\\)"
+                endCaptures:
+                    "0":
+                        name: "punctuation.definition.comment.end.attache"
+                name: "comment.block.attache"
+                patterns: [
+                    {include: '#comment_block'}
+                ]
+            }
+        ]
+    string:
+        patterns: [
+            {
+                match: "\"(?:[^\"]|\"\")*\""
+                name: "string.quoted.double.attache"
+            }
+            {
+                match: "`\"(?:[^\"]|\"\")*\""
+                name: "string.quoted.single.attache"
+            }
+            {
+                begin: "\\$\""
+                end: "\""
+                name: "string.quoted.double.attache"
+                patterns: [
+                    {
+                        include: "#string_interpolate"
+                    }
+                    {
+                        include: "#string_escaped_char"
+                    }
+                ]
+            }
+            {
+                match: "\\$[[:alpha:]][[[:alpha:]]\\w]*"
+                name: "string.quoted.symbol.attache"
+            }
+        ]
+    string_escaped_char:
+        patterns: [
+            {
+                match: "\"\""
+                name: "constant.character.escape.attache"
+            }
+        ]
+    string_interpolate:
+        patterns: [
+            {
+                begin: "\\$\\{"
+                end: "\\}"
+                name: "variable.interpolation.attache"
+                patterns: [
+                    include: "$self"
+                ]
+            }
+        ]
+    keyword:
+        patterns: [
+            {
+                match: "\\b_+\\d*"
+                name: "variable.abstract.attache"
+            }
+            {
+                match: "\\$+"
+                name: "variable.reference.attache"
+            }
+        ]
+    number:
+        patterns: [
+            {
+                match: "\\b(?:(?:[0-9]*\\.[0-9]+)|(?:[0-9]+))(?:i?x?|x?i?)"
+                name: "constant.numeric.attache"
+            }
+            {
+                match: "\\b(?:true|false|nil)\\b"
+                name: "constant.language.attache"
+            }
+        ]
+    function_call:
+        patterns: [
+            {
+                begin: "(Class(?:Named)?)\\s*\\[\\s*([[:alpha:]][[[:alpha:]]\\w]*)"
+                beginCaptures:
+                    "1":
+                        name: "keyword.control.class.attache"
+                    "2":
+                        name: "support.function.attache"
+                end: "\\]"
+            }
+            {
+                begin: "([[:alpha:]][[[:alpha:]]\w]*)\\s*\\["
+                beginCaptures:
+                    "1":
+                        name: "support.function.attache"
+                end: "\\]"
+                patterns: [
+                    include: "$self"
+                ]
+            }
+        ]
+    # functions:
+    #     patterns: [
+    #         {
+    #             match: "\\p{Lu}[[:alpha]]*"
+    #             name: "support.function.attache"
+    #         }
+    #     ]
+    operator:
+        patterns: [
+            {
+                comment: "Other operators."
+                match: "(->|→)"
+                name: "keyword.control.attache"
+            }
+            {
+                match: "(;|;;)"
+                name: "punctuation.terminator.statement"
+            }
+            {
+                comment: "Meta operators."
+                match: "(@|@@|@%|\\^\\^|&|&:|#|#:|#\\.|'|''|##|=>|:>|@>|\\\\|!|!!|⇒|⩓|↠|◁|▷)"
+                name: "keyword.control.attache"
+            }
+            {
+                comment: "Assignment operators."
+                match: "(\\.=|\\.\\.=|:=|::=|≔|@=)"
+                name: "keyword.control.attache"
+            }
+            {
+                comment: "Computational operators."
+                match: "(\\+|-|\\*|/|:|::|\\.\\.|\\.\\.\\.|‥|…|∩|∪|∆|Ø|!|\\^|\\?(?!\\?)|\\/\\/|⁄|%|\\||±|<:|↞)"
+                name: "keyword.control.attache"
+            }
+            {
+                comment: "Logical symbollic operators."
+                match: "(⊼|∨|⊻|⊽|∧)"
+                name: "keyword.control.attache"
+            }
+            {
+                comment: "Relational operators."
+                match: "(=|==|=\\/=|\\/=|≠|>|<|>=|<=|≥|≤)"
+                name: "keyword.control.attache"
+            }
+            {
+                match: "\\b(?:is_an?|!?in|is_not_an?|not|typeof|parentof|else|and|or|xor|nand|nor|xnor|is)\\b"
+                name: "support.keyword.attache"
+            }
+        ]
+
+scopeName: "source.attache"
