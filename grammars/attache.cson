@@ -228,12 +228,19 @@ repository:
             }
             {
                 comment: "Relational operators."
-                match: "(=|==|=\\/=|\\/=|≠|>|<|>=|<=|≥|≤)"
+                match: "(=|==|=\\/=|\\/=|≠|>|<(?!~)|>=|<=|≥|≤)"
                 name: "keyword.control.attache"
             }
             {
                 match: "\\b(?:is_an?|!?in|is_not_an?|not|typeof|parentof|else|and|or|xor|nand|nor|xnor|is)\\b"
                 name: "support.keyword.attache"
+            }
+        ]
+    bracket:
+        patterns: [
+            {
+                match: "[()]|<~|~>|\\[|\\]"
+                name: "meta.bracket.attache"
             }
         ]
 
